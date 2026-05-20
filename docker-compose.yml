@@ -1,6 +1,9 @@
 services:
   postgres:
-    image: postgres:16-alpine # <-- OTIMIZAÇÃO: Versão Alpine (muito mais leve)
+    build:
+      context: ./docker/postgres
+      dockerfile: Dockerfile
+    image: bi_postgres:16
     container_name: bi_postgres
     restart: unless-stopped # <-- OTIMIZAÇÃO: Reinicia sozinho se o PC reiniciar
     environment:

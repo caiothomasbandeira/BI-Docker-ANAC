@@ -14,7 +14,7 @@
 
 ### Conectar no Postgres pelo pgAdmin
 
-- Host: localhost
+- Host: postgres
 - Porta: 5432
 - Database: bi_db
 - Usuario: bi_user
