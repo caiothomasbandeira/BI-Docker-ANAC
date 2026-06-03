@@ -14,10 +14,13 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./dados:/data:ro
+      - ./dados:/data:ro
+      - ./sql:/sql:ro
     healthcheck: # <-- OTIMIZAÇÃO: Testa se o banco subiu antes de liberar outros serviços
       test: ["CMD-SHELL", "pg_isready -U bi_user -d bi_db"]
-      interval: 5s
-      timeout: 5s
+      interval: 15s
+      timeout: 15s
       retries: 5
 
   pgadmin:
@@ -31,6 +34,8 @@ services:
       PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
     ports:
       - "5050:80"
+    volumes:
+      - ./sql:/var/lib/pgadmin/storage/admin_example_com/sql:ro
     depends_on:
       postgres:
         condition: service_healthy # <-- OTIMIZAÇÃO: Só inicia após o banco estar 100% pronto
