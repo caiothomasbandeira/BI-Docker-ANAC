@@ -37,4 +37,5 @@ FROM repositorio.voos_unificados
 WHERE ano IS NOT NULL
   AND mes IS NOT NULL
   AND data_referencia IS NOT NULL
-ORDER BY ano, mes;
+ORDER BY ano, mes
+ON CONFLICT (data_referencia) DO NOTHING;  -- <== OTIMIZAÇÃO: Ignora as datas que já existem!

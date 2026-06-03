@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     image: bi_postgres:16
     container_name: bi_postgres
-    restart: unless-stopped # <-- OTIMIZAÇÃO: Reinicia sozinho se o PC reiniciar
+    restart: unless-stopped
     environment:
       POSTGRES_USER: bi_user
       POSTGRES_PASSWORD: bi_password
@@ -16,7 +16,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./sql:/sql:ro
       - ./data:/data:ro
-    healthcheck: # <-- OTIMIZAÇÃO: Testa se o banco subiu antes de liberar outros serviços
+    healthcheck:
       test: ["CMD-SHELL", "pg_isready -U bi_user -d bi_db"]
       interval: 20s
       timeout: 20s
@@ -37,7 +37,7 @@ services:
       - ./sql:/var/lib/pgadmin/storage/admin_example_com:ro
     depends_on:
       postgres:
-        condition: service_healthy # <-- OTIMIZAÇÃO: Só inicia após o banco estar 100% pronto
+        condition: service_healthy
 
 volumes:
   postgres_data:
