@@ -1,7 +1,6 @@
 # Credenciais de Login
 
-
-OTIMIZAR O TAMANHO DISSO IGUAL FIZ COM O POSTGRES ISSO: Image dpage/pgadmin4:8 [⣀⣿⣿⣿⣿⣿⣿⣿⡀⣦⣿⠀⣿⣿⣿⣿⣿] 31.47MB / 170.1MB Pulling
+Caminho dos scripts dentro do pgadmin: /var/lib/pgadmin/storage/admin_example_com
 
 ## Postgres
 - Host: localhost
