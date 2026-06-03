@@ -74,7 +74,7 @@ Os dados foram extraídos do portal oficial da Agência Nacional de Aviação Ci
 
 ## 6. Credenciais e Acessos
 
-Os contêineres Docker expõem os serviços nas portas padrão locais. Utilize as credenciais abaixo para acesso:
+Os contêineres Docker expõem os serviços nas portas padrão locais. Utilize as tabelas abaixo para configurar e acessar cada ambiente:
 
 ### Servidor de Banco de Dados (PostgreSQL)
 | Parâmetro | Valor |
@@ -85,14 +85,22 @@ Os contêineres Docker expõem os serviços nas portas padrão locais. Utilize a
 | **Usuário** | `bi_user` |
 | **Senha** | `bi_password` |
 
-### Gerenciador do Banco (pgAdmin)
+### Gerenciador do Banco (pgAdmin - Login Web)
 | Parâmetro | Valor |
 | :--- | :--- |
-| **Acesso Web** | [http://localhost:5050](http://localhost:5050) |
+| **Acesso Web** | http://localhost:5050 |
 | **Email (Login)** | `admin@example.com` |
 | **Senha** | `admin` |
 
-*(No pgAdmin, ao criar um novo servidor para acessar o banco, utilize os dados: Name: `bi_postgres`, Host name: `postgres`, Port: `5432`, Maintenance DB: `bi_db`, Username: `bi_user`, Password: `bi_password`)*.
+### Conexão do Servidor Postgres dentro do pgAdmin
+| Parâmetro | Campo no pgAdmin | Valor |
+| :--- | :--- | :--- |
+| **Name** | General > Name | `bi_postgres` |
+| **Host** | Connection > Host name/address | `postgres` |
+| **Porta** | Connection > Port | `5432` |
+| **Database** | Connection > Maintenance database | `bi_db` |
+| **Usuário** | Connection > Username | `bi_user` |
+| **Senha** | Connection > Password | `bi_password` |
 
 ---
 
@@ -101,36 +109,61 @@ Os contêineres Docker expõem os serviços nas portas padrão locais. Utilize a
 Siga a sequência abaixo para levantar a infraestrutura, carregar os dados e construir as Views analíticas.
 
 ### Pré-requisitos
-* **Docker Desktop** e **Docker Compose** instalados.
-* **Git** instalado.
-* Os arquivos CSV estáticos baixados e armazenados no diretório `./data/dados_estatico/` na raiz do projeto (com os nomes `2023.csv`, `2024.csv`, `2025.csv`).
-* **Power BI Desktop** instalado.
+* **Docker Desktop** e **Docker Compose** instalados e em execução.
+* **Git** instalado para controle de versão.
+* **Power BI Desktop** instalado para visualização do dashboard.
+* **Arquivos de Dados:** Os arquivos CSV estáticos devem ser baixados e armazenados previamente no diretório da raiz do projeto seguindo a estrutura abaixo:
+  ```text
+  proj-final-bi/
+  └── data/
+      └── dados_estatico/
+          ├── 2023.csv
+          ├── 2024.csv
+          └── 2025.csv
+  ```
 
-### Passo a Passo
+---
 
-**1. Subir a Infraestrutura (Docker)**
-No terminal, navegue até a raiz do projeto e execute:
+### Passo a Passo para Inicialização
+
+#### Passo 1: Subir a Infraestrutura Docker
+Abra o terminal na raiz do projeto (`proj-final-bi`) e execute o comando para construir as imagens e iniciar os serviços em segundo plano:
 ```bash
-# Constroi a imagem e sobe os conteineres em segundo plano
 docker compose up -d --build
 ```
-Aguarde alguns segundos até que o terminal indique que os contêineres estão com o status `Healthy` e `Started`.
+> *Nota: Aguarde alguns segundos após a execução. O terminal indicará o status de sucesso quando os contêineres estiverem marcados como `Healthy` e `Started`.*
 
-**2. Acessar o pgAdmin**
-* Abra o navegador e acesse: `http://localhost:5050`.
-* Faça login com as credenciais administrativas (`admin@example.com` / `admin`).
-* Registre o servidor do PostgreSQL utilizando as credenciais listadas na seção 6.
+#### Passo 2: Registrar o Banco de Dados no pgAdmin
+1. Abra o seu navegador web e acesse o endereço de gerenciamento: `http://localhost:5050`
+2. Realize o login utilizando as credenciais administrativas:
+   * **Email:** `admin@example.com`
+   * **Senha:** `admin`
+3. No painel esquerdo, clique com o botão direito em **Servers** > **Register** > **Server...**
+4. Preencha os campos obrigatórios utilizando as informações detalhadas na terceira tabela da Seção 6 (Aba General: `bi_postgres` | Aba Connection: `postgres`, `bi_user`, `bi_password`).
 
-**3. Executar os Scripts SQL (ETL e Modelagem)**
-Os scripts estão mapeados automaticamente para dentro do contêiner do pgAdmin por meio de volumes.
-Para executá-los, no pgAdmin:
-* Clique com o botão direito no banco `bi_db` e abra a **Query Tool**.
-* O caminho interno onde os scripts estão disponíveis é: `/var/lib/pgadmin/storage/admin_example_com`
-* Navegue até esta pasta pelo ícone de abrir pasta na Query Tool e execute os scripts `.sql` seguindo a numeração sequencial (ex: `01_dw.sql`, `02_tables.sql`, etc.), culminando na criação do Data Mart.
+#### Passo 3: Executar a Carga de Dados e Modelagem (ETL)
+Os scripts SQL locais são mapeados automaticamente por volumes para dentro do ambiente do pgAdmin.
+1. No menu do pgAdmin, expanda o servidor registrado e clique com o botão direito sobre o banco de dados `bi_db`.
+2. Selecione a opção **Query Tool** para abrir o editor de comandos.
+3. Clique no ícone de pasta (Open File) para navegar até o diretório de armazenamento interno: `/var/lib/pgadmin/storage/admin_example_com`
+4. Abra e execute os scripts `.sql` individualmente, seguindo estritamente a ordem numérica sequencial dos arquivos (ex: `01_dw.sql`, `02_tables.sql`, `03_import_estaticos.sql`... até o último script de criação das views). 
+5. Este processo consolidará o carregamento das tabelas fato, dimensões e a estrutura final do Data Mart.
 
-**4. Conectar o Power BI**
-* Abra o arquivo `.pbix` ou inicie um novo projeto no Power BI.
-* Selecione **Obter Dados > Banco de Dados PostgreSQL**.
-* Preencha as credenciais: Servidor `localhost`, Banco `bi_db`.
-* Na aba lateral esquerda (na tela de login do Power BI), certifique-se de escolher **Banco de Dados** (Database) e insira o usuário `bi_user` e senha `bi_password`.
-* **Regra Importante:** Para atender a arquitetura de BI, importe **apenas as Views** pertencentes ao schema `datamart` (ex: `datamart.view_kpi`, `datamart.view_month`), e não as tabelas cruas do schema `dw`.
+#### Passo 4: Conectar e Consumir no Power BI
+1. Inicie o software do Power BI Desktop e abra o arquivo do seu projeto ou crie um novo relatório.
+2. Na página inicial, clique em **Obter Dados** > **Mais...** > **Banco de Dados** > **Banco de Dados PostgreSQL**.
+3. Na janela de configuração de conexão, preencha os parâmetros de rede local:
+   * **Servidor:** `localhost`
+   * **Banco de dados:** `bi_db`
+4. Na listagem de autenticação da janela seguinte, selecione a opção **Banco de Dados** (Database) na barra lateral esquerda e insira as credenciais de acesso:
+   * **Usuário:** `bi_user`
+   * **Senha:** `bi_password`
+5. No navegador de tabelas do Power BI, selecione e carregue apenas as Views analíticas criadas dentro do schema do Data Mart:
+   ```text
+   datamart.view_kpi
+   datamart.view_month
+   datamart.view_per_company
+   datamart.view_routes
+   ```
+
+> **Regra de Arquitetura:** Para preservar a integridade do modelo dimensional estabelecido, nunca importe as tabelas cruas ou os schemas internos de transformação (`repositorio` ou `dw`) diretamente para o ambiente do Power BI. O consumo deve ser feito exclusivamente através das Views disponibilizadas no `datamart`.
