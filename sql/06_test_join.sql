@@ -1,6 +1,4 @@
--- =====================================================================
 -- 06 — Conferir se a união funcionou (Auditoria de Qualidade de Dados)
--- =====================================================================
 
 -- 1. Resumo por Ano com Total Geral 
 -- Objetivo: Ver o volume total da tabela unificada e a distribuição macro por ano.
