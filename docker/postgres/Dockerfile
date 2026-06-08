@@ -1,5 +1,5 @@
 FROM postgres:16-alpine
 
-# Removemos a instalação do curl/python e o script .sh
+RUN apk add --no-cache python3
 
 COPY init/ /docker-entrypoint-initdb.d/
