@@ -57,6 +57,6 @@ while IFS='|' read -r table filepath; do
   escaped_path=$(printf "%s" "$filepath" | sed "s/'/''/g")
 
   $psql_cmd -c "CREATE TABLE IF NOT EXISTS repositorio.\"$table\" ($cols);"
-  $psql_cmd -c "\\copy repositorio.\"$table\" FROM '$escaped_path' WITH (FORMAT csv, HEADER true, DELIMITER ';', QUOTE '\"');"
+  $psql_cmd -c "\\copy repositorio.\"$table\" FROM '$escaped_path' WITH (FORMAT csv, HEADER true, DELIMITER ';', QUOTE '\"', ENCODING 'LATIN1');"
   echo "Carregado: repositorio.$table"
 done < "$manifest"
