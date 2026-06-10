@@ -1,4 +1,4 @@
--- View por empresa
+-- 21 — View por empresa
 
 CREATE OR REPLACE VIEW datamart.vw_ranking_empresas AS
 SELECT

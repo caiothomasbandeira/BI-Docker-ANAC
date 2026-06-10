@@ -1,4 +1,4 @@
--- View por rota
+-- 22 — View por rota
 
 CREATE OR REPLACE VIEW datamart.vw_ranking_rotas AS
 SELECT

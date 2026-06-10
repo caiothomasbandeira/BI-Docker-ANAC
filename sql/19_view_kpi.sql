@@ -1,4 +1,4 @@
--- View de KPIs gerais
+-- 19 — View de KPIs gerais
 
 CREATE OR REPLACE VIEW datamart.vw_kpis_gerais AS
 SELECT
