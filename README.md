@@ -150,20 +150,23 @@ Os scripts SQL locais são mapeados automaticamente por volumes para dentro do a
 5. Este processo consolidará o carregamento das tabelas fato, dimensões e a estrutura final do Data Mart.
 
 #### Passo 4: Conectar e Consumir no Power BI
-1. Inicie o software do Power BI Desktop e abra o arquivo do seu projeto ou crie um novo relatório.
-2. Na página inicial, clique em **Obter Dados** > **Mais...** > **Banco de Dados** > **Banco de Dados PostgreSQL**.
-3. Na janela de configuração de conexão, preencha os parâmetros de rede local:
+1. Inicie o software do **Power BI Desktop** e abra o arquivo do seu projeto ou crie um novo relatório vazio.
+2. Na aba inicial, clique em **Obter Dados** > **Mais...** > **Banco de Dados** > **Banco de Dados PostgreSQL** e clique em Conectar.
+3. Na primeira janela de configuração (**Banco de dados PostgreSQL**), preencha os parâmetros de rede:
    * **Servidor:** `localhost`
-   * **Banco de dados:** `bi_db`
-4. Na listagem de autenticação da janela seguinte, selecione a opção **Banco de Dados** (Database) na barra lateral esquerda e insira as credenciais de acesso:
-   * **Usuário:** `bi_user`
+   * **Banco de Dados:** `bi_db`
+   * **Modo de Conectividade de Dados:** Recomendamos selecionar **Importar** (para garantir melhor performance e habilitar todas as funções DAX avançadas no seu Data Warehouse). Clique em **OK**.
+4. Na janela seguinte de autenticação, siga os passos com atenção:
+   * Na barra lateral esquerda, clique na aba **Banco de Dados** (não use a opção "Windows" ou "Conta da Microsoft").
+   * **Nome do usuário:** `bi_user`
    * **Senha:** `bi_password`
-5. No navegador de tabelas do Power BI, selecione e carregue apenas as Views analíticas criadas dentro do schema do Data Mart:
+   * **Selecione o nível no qual essas configurações serão aplicadas:** No menu suspenso que aparece (geralmente na parte inferior ou superior da tela), selecione a opção específica do banco: `localhost;bi_db`. Isso garante que as credenciais fiquem salvas apenas para este projeto.
+   * Clique em **Salvar** / **Conectar**.
+5. No navegador de tabelas do Power BI que se abrirá, selecione e carregue **apenas as Views analíticas** criadas dentro do schema do Data Mart:
    ```text
    datamart.view_kpi
    datamart.view_month
    datamart.view_per_company
    datamart.view_routes
-   ```
-
+   
 > **Regra de Arquitetura:** Para preservar a integridade do modelo dimensional estabelecido, nunca importe as tabelas cruas ou os schemas internos de transformação (`repositorio` ou `dw`) diretamente para o ambiente do Power BI. O consumo deve ser feito exclusivamente através das Views disponibilizadas no `datamart`.
